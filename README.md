@@ -32,3 +32,8 @@ export {
 }
 ```
 
+You can also watch as part of your build system.
+
+```sh
+autoindex src --watch
+```
