@@ -2,6 +2,7 @@ import * as fs from "fs/promises"
 import { camelCase } from "lodash"
 import * as path from "path"
 
+import chokidar from "chokidar"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 
@@ -16,11 +17,22 @@ if (!dirPath) {
 
 const watch = argv.w || argv.watch
 
-// fs.watch(dirname, async (eventType, filename) => {
-// 	if (eventType === "rename") callback()
-// })
-
-autoindex(dirPath)
+if (watch) {
+	autoindex(dirPath).then(() => {
+		const watcher = chokidar.watch(dirPath, {
+			// Ignore dotfiles
+			ignored: /(^|[\/\\])\../,
+			persistent: true,
+			ignoreInitial: true, // ignore the initial add events
+			depth: Infinity, // Recursively watch
+		})
+		watcher.on("add", (path) => autoindex(dirPath))
+		watcher.on("unlink", (path) => autoindex(dirPath))
+		watcher.on("error", (error) => console.error(`Watcher error: ${error}`))
+	})
+} else {
+	autoindex(dirPath)
+}
 
 async function autoindex(startDirPath: string) {
 	// Find all the autoindex files
