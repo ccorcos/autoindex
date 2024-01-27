@@ -1,5 +1,6 @@
 {
 	"name": "@ccorcos/autoindex",
+	"private": false,
 	"version": "0.0.1",
 	"description": "Generate index files.",
 	"repository": {
@@ -30,4 +31,5 @@
 		"chokidar": "^3.5.3",
 		"lodash": "^4.17.21"
 	}
+
 }
